@@ -55,17 +55,22 @@ namespace :db do
     albums = Album.all
 
     albums.each do |album|
-      songs = RSpotify::Album.find(album.spotify_id).tracks
+      current_album = RSpotify::Album.find(album.spotify_id)
+      songs = current_album.tracks
 
-      songs.each do |song|
-        Song.where(spotify_id: song.id).first_or_create(
-          name: song.name,
-          spotify_url: song.external_urls['spotify'],
-          preview_url: song.preview_url,
-          duration_ms: song.duration_ms,
-          explicit: song.explicit,
-          album_id: album.id
-        )
+      unless current_album.nil?
+        songs = current_album.tracks
+
+        songs.each do |song|
+          Song.where(spotify_id: song.id).first_or_create(
+            name: song.name,
+            spotify_url: song.external_urls['spotify'],
+            preview_url: song.preview_url,
+            duration_ms: song.duration_ms,
+            explicit: song.explicit,
+            album_id: album.id
+          )
+        end
       end
     end
   end
