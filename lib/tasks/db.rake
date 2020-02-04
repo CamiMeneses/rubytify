@@ -55,7 +55,9 @@ namespace :db do
     albums = Album.all
 
     albums.each do |album|
-      songs = RSpotify::Album.find(album.spotify_id).tracks
+
+      current_album = RSpotify::Album.find(album.spotify_id)
+      songs = current_album.tracks
 
       songs.each do |song|
         Song.where(spotify_id: song.id).first_or_create(
